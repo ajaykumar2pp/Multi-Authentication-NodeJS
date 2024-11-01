@@ -1,0 +1,22 @@
+{
+  "name": "nodejs-auth",
+  "version": "1.0.0",
+  "description": "Register, Login, And Logout page ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js -e js, ejs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-ejs-layouts": "^2.5.1",
+    "mongoose": "^8.8.0",
+    "passport": "^0.7.0"
+  }
+}
