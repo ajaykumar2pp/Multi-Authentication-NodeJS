@@ -27,11 +27,16 @@ dbConfig.connectMongoDB();
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.redirect('/api/register');
+    res.redirect('/register');
 });
 
 // ********  Route Setup ***********//
-app.use('/api', userRoutes);
+app.use('/', userRoutes);
+
+//*****   404 Error Handling   *******/ 
+app.use((req, res, next) => {
+    res.status(404).render('errors/error', { title: 'Page Not Found' });
+});
 
 
 // ***********   Port Start   *************//
