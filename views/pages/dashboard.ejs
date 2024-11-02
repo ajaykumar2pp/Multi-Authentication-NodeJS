@@ -16,10 +16,21 @@
 
 <body>
     <div class="container text-center mt-5">
-        <h1 class="display-4">Dashboard Page</h1>
-        <p class="lead">Hurray !.</p>
-        <a href="/" class="btn btn-primary">Go Back Home</a>
+        <h1 class="display-4 mb-4">Dashboard Page</h1>
+        <h2 class="mb-3">Welcome, <%= user.username %>!</h2>
+        
+    
+        <div class="d-flex align-items-center justify-content-center mb-4">
+            <img src="<%= user.image || '/images/default-user.avif' %>" alt="User Profile Image"
+            draggable="false" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 10px;">
+            <p class="lead mb-0">You are logged in as <%= user.email %>.</p>
+        </div>
+
+  
+ 
+        <a href="/logout" class="btn btn-danger">Logout</a>
     </div>
 </body>
+
 
 </html>

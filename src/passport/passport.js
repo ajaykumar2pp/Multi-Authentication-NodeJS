@@ -1,13 +1,15 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt');
 
+// Local Strategy for email and password login
 passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
     try {
         // console.log("Checking user with email:", email);
 
-         // check if email exists
+        // check if email exists
         const user = await User.findOne({ email });
         // console.log("User found:", user);
 
@@ -27,6 +29,33 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
         return done(null, false, { message: 'Something went wrong' })
     }
 }));
+
+
+// Google Strategy for OAuth authentication
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/callback",
+},
+    async (accessToken, refreshToken, profile, done) => {
+        // console.log(profile)
+        try {
+            let user = await User.findOne({ googleId: profile.id });
+
+            if (!user) {
+                user = await new User({
+                    googleId: profile.id,
+                    username: profile.displayName,
+                    email: profile.emails[0].value,
+                    image: profile.photos[0].value,
+                }).save();
+            }
+            return done(null, user);
+        } catch (err) {
+            console.error(err);
+            done(err, null);
+        }
+    }));
 
 
 // Serialize  user

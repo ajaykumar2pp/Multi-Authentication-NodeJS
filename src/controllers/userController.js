@@ -1,6 +1,5 @@
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt')
-// const passport = require('../passport/passport')
 const passport = require('passport')
 
 
@@ -16,7 +15,8 @@ exports.loginPage = (req, res) => {
 
 // Dashboard 
 exports.dashboardPage = (req, res) => {
-    res.render('pages/dashboard')
+    // console.log('Logged-in User:', req.user);
+    res.render('pages/dashboard' ,{ user: req.user })
 }
 
 // POST Register
@@ -87,7 +87,7 @@ exports.postLogin = (req, res, next) => {
             return res.redirect('/login');
         }
 
-        // Log the user in and redirect to dashboard
+        // Login user and redirect to dashboard
         req.logIn(user, (err) => {
             if (err) {
                 req.flash('error', 'Login failed. Please try again.');
@@ -100,4 +100,15 @@ exports.postLogin = (req, res, next) => {
 
 
     })(req, res, next)
+}
+
+// Get Logout 
+exports.logoutUser=(req,res)=>{
+    req.logout(err => {
+        if (err) { return next(err); }
+        // req.flash('success', 'You have logged out successfully');
+        req.session.destroy(() => {
+            res.redirect('/'); 
+        });
+    });
 }
