@@ -20,31 +20,43 @@
     <div class="container-fluid">
         <h2 class="text-center mb-4">Login to Your Account</h2>
 
-        <form action="/login" method="POST">
-            <div class="mb-3">
-                <label for="useremail" class="form-label">Email</label>
-                <input name="email" type="email" class="form-control" id="useremail" placeholder="Enter your email"
-                    required>
+        <% if (messages.error) { %>
+            <div class="alert alert-danger text-center">
+                <%= messages.error %>
             </div>
-            <div class="mb-3 password-wrapper">
-                <label for="password" class="form-label">Password</label>
-                <input name="password" type="password" class="form-control" id="password"
-                    placeholder="********************" required>
-                <i class="bi bi-eye" id="togglePassword"></i>
-            </div>
+            <% } %>
 
-            <button type="submit" class="btn btn-primary mb-3">Login</button>
-        </form>
+                <% if (messages.success) { %>
+                    <div class="alert alert-success text-center">
+                        <%= messages.success %>
+                    </div>
+                    <% } %>
 
-        <div class="text-center">
-            <a class="msg-s" href="/register">Don't have an account? Register</a>
-        </div>
-        <hr>
-        <div class="text-center mt-3">
-            <a href="/auth" class="btn btn-outline-primary w-100">
-                <i class="bi bi-google me-2"></i>Login with Google
-            </a>
-        </div>
+                        <form action="/login" method="POST">
+                            <div class="mb-3">
+                                <label for="useremail" class="form-label">Email</label>
+                                <input name="email" type="email" class="form-control" id="useremail"
+                                    value="<%= messages.email  %>" placeholder="Enter your email">
+                            </div>
+                            <div class="mb-3 password-wrapper">
+                                <label for="password" class="form-label">Password</label>
+                                <input name="password" type="password" class="form-control" id="password"
+                                    placeholder="********************">
+                                <i class="bi bi-eye" id="togglePassword"></i>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mb-3">Login</button>
+                        </form>
+
+                        <div class="text-center">
+                            <a class="msg-s" href="/register">Don't have an account? Register</a>
+                        </div>
+                        <hr>
+                        <div class="text-center mt-3">
+                            <a href="/auth" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-google me-2"></i>Login with Google
+                            </a>
+                        </div>
     </div>
 
 

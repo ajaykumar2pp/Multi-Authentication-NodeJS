@@ -20,18 +20,30 @@
     <div class="container-fluid">
         <h2 class="text-center mb-4">Create an Account</h2>
         
+        <% if(messages.error) { %>
+            <div class="alert alert-danger text-center ">
+                <%= messages.error %>
+            </div>
+        <% } %>
+        <% if (messages.success) { %>
+            <div class="alert alert-success text-center">
+                <%= messages.success %>
+            </div>
+        <% } %>
+        
         <form action="/" method="POST">
+           
             <div class="mb-3">
                 <label for="username" class="form-label">Name</label>
-                <input name="username" type="text" class="form-control" id="username" placeholder="Enter your name" required>
+                <input name="username" type="text" class="form-control" id="username" value="<%= messages.username  %>" placeholder="Enter your name" >
             </div>
             <div class="mb-3">
                 <label for="useremail" class="form-label">Email</label>
-                <input name="email" type="email" class="form-control" id="useremail" placeholder="Enter your email" required>
+                <input name="email" type="email" class="form-control" id="useremail" value="<%= messages.email  %>"  placeholder="Enter your email" >
             </div>
             <div class="mb-3 password-wrapper">
                 <label for="password" class="form-label">Password</label>
-                <input name="password" type="password" class="form-control" id="password" placeholder="********************" required>
+                <input name="password" type="password" class="form-control" id="password" placeholder="********************" >
                 <i class="bi bi-eye" id="togglePassword"></i>
             </div>
 

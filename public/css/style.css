@@ -46,3 +46,13 @@ hr {
     cursor: pointer;
     color: #6c757d;
 }
+
+
+@media (max-width: 576px) {
+    body{
+        background: none;
+    }
+    .container-fluid {
+        box-shadow: none;
+    }
+}

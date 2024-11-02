@@ -2,11 +2,30 @@ require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const cors = require('cors')
+const session = require('express-session')
+const flash = require('express-flash')
+const passport = require('./src/passport/passport');
 const dbConfig = require('./src/config/db.config')
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 
 // Initialize Express app
 const app = express();
+
+//***************** Session config   ******************//
+app.use(session({
+    secret:  process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24 hour
+}))
+
+//***************** Passport setup  ******************//
+app.use(passport.initialize());
+app.use(passport.session());
+
+//***************** Express Flash  ******************//
+app.use(flash())
+
 
 // ********  serve the static file from the 'public' directory *********//
 app.use(express.static(path.join(__dirname, 'public')))
