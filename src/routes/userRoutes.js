@@ -34,6 +34,18 @@ router.get('/auth/google/callback',
 // Dashboard GET Route
 router.get('/dashboard',auth, userController.dashboardPage);
 
+// Forget Password GET Route
+router.get('/forget-password', userController.forgetPage);
+
+// Forget Password POST Route
+router.post('/forget-password', userController.forgetPassword);
+
+// Check Email GET Route
+router.get('/check-email', userController.checkEmail);
+
+// Reset Password page
+router.get('/reset-password/:token', userController.resetPassword)
+
 // Logout GET Route
 router.get('/logout', userController.logoutUser);
 

@@ -1,6 +1,8 @@
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
+const transporter = require('../config/nodemailer')
+const crypto = require('crypto');
 
 
 //  Register 
@@ -13,10 +15,21 @@ exports.loginPage = (req, res) => {
     res.render('auth/login')
 }
 
+// Forget Password Page
+exports.forgetPage = (req, res) => {
+    res.render('auth/forgetPassword')
+}
+
+// Check email page
+exports.checkEmail = (req, res) => {
+    res.render('auth/checkEmail')
+}
+
+
 // Dashboard 
 exports.dashboardPage = (req, res) => {
     // console.log('Logged-in User:', req.user);
-    res.render('pages/dashboard' ,{ user: req.user })
+    res.render('pages/dashboard', { user: req.user })
 }
 
 // POST Register
@@ -103,12 +116,66 @@ exports.postLogin = (req, res, next) => {
 }
 
 // Get Logout 
-exports.logoutUser=(req,res)=>{
+exports.logoutUser = (req, res) => {
     req.logout(err => {
         if (err) { return next(err); }
         // req.flash('success', 'You have logged out successfully');
         req.session.destroy(() => {
-            res.redirect('/'); 
+            res.redirect('/');
         });
     });
+}
+
+
+
+// Forget Password POST
+exports.forgetPassword = async (req, res) => {
+    console.log(req.body);
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    // console.log("user email",user.email)
+    if (!user) {
+        req.flash('error', 'No account with that email found');
+        return res.redirect('/forget-password');
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    await user.save();
+
+    const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
+    console.log("Reset URL Link",resetUrl)
+
+    // Send email
+    const mailOptions = {
+        to: user.email,
+        from: process.env.EMAIL_USER,
+        subject: 'Password Reset',
+        html: `<p>You requested a password reset.</p>
+                   <p>Click this <a href="${resetUrl}">link</a> to set a new password.</p>`
+    };
+
+    transporter.sendMail(mailOptions, (err) => {
+        if (err) {
+            console.error(err);
+            req.flash('error', 'Something went wrong');
+            return res.redirect('/forget-password');
+        }
+        res.redirect('/check-email');
+    });
+}
+
+
+exports.resetPassword = async(req,res)=>{
+    
+    const userToken = req.params.token;
+    console.log("User Token : ", userToken)
+
+    if (!userToken) {
+        req.flash('error', 'Password reset token is invalid or has expired');
+        return res.redirect('/forget-password');
+    }
+    res.render('auth/resetPassword', { token: req.params.token });
 }
