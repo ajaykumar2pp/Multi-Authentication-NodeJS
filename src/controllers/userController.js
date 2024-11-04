@@ -154,7 +154,7 @@ exports.forgetPassword = async (req, res) => {
         from: process.env.EMAIL_USER,
         subject: 'Password Reset',
         html: `<p>You requested a password reset.</p>
-                   <p>Click this <a href="${resetUrl}">link</a> to set a new password.</p>`
+                   <p>Click this <a href="${resetUrl}" target="_blank">link</a> to set a new password.</p>`
     };
 
     transporter.sendMail(mailOptions, (err) => {
@@ -168,7 +168,7 @@ exports.forgetPassword = async (req, res) => {
 }
 
 
-exports.resetPassword = async(req,res)=>{
+exports.resetPasswordPage = async(req,res)=>{
     
     const userToken = req.params.token;
     console.log("User Token : ", userToken)
@@ -178,4 +178,30 @@ exports.resetPassword = async(req,res)=>{
         return res.redirect('/forget-password');
     }
     res.render('auth/resetPassword', { token: req.params.token });
+}
+
+exports.resetPassword = async(req,res)=>{
+
+    const { password, confirmPassword } = req.body;
+    console.log(req.body)
+
+    if (password !== confirmPassword) {
+        req.flash('error', 'Passwords do not match');
+        return res.redirect(`/reset-password/${req.params.token}`);
+    }
+
+    const userToken = req.params.token;
+
+    if (!userToken) {
+        req.flash('error', 'Password reset token is invalid or has expired');
+        return res.redirect('/forget-password');
+    }
+
+    res.redirect('/success');
+}
+
+
+//  Success Page 
+exports.successPage=(req,res)=>{
+res.render('auth/successPassword')
 }

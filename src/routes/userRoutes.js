@@ -43,8 +43,14 @@ router.post('/forget-password', userController.forgetPassword);
 // Check Email GET Route
 router.get('/check-email', userController.checkEmail);
 
-// Reset Password page
-router.get('/reset-password/:token', userController.resetPassword)
+// Reset Password Page GET Route
+router.get('/reset-password/:token', userController.resetPasswordPage)
+
+// Reset Password POST Route
+router.post('/reset-password/:token', userController.resetPassword)
+
+// Success Page GET Route
+router.get('/success', userController.successPage)
 
 // Logout GET Route
 router.get('/logout', userController.logoutUser);
