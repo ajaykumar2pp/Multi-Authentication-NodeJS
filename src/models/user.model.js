@@ -7,7 +7,9 @@ const userSchema = new Schema({
     email: { type: String, required: true, unique: true },
     image: {type: String},
     password: { type: String },
-    googleId: {type: String}
+    googleId: {type: String},
+    resetPasswordToken: { type: String },  
+    resetPasswordExpires: { type: Date } 
 }, { timestamps: true });
 
 

@@ -142,11 +142,11 @@ exports.forgetPassword = async (req, res) => {
 
     const token = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // Expire 15 min
     await user.save();
 
     const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
-    console.log("Reset URL Link",resetUrl)
+    console.log("Reset URL Link", resetUrl)
 
     // Send email
     const mailOptions = {
@@ -168,10 +168,13 @@ exports.forgetPassword = async (req, res) => {
 }
 
 
-exports.resetPasswordPage = async(req,res)=>{
-    
-    const userToken = req.params.token;
-    console.log("User Token : ", userToken)
+exports.resetPasswordPage = async (req, res) => {
+
+    const userToken = await User.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    });
+    // console.log("User Token : ", userToken)
 
     if (!userToken) {
         req.flash('error', 'Password reset token is invalid or has expired');
@@ -180,28 +183,40 @@ exports.resetPasswordPage = async(req,res)=>{
     res.render('auth/resetPassword', { token: req.params.token });
 }
 
-exports.resetPassword = async(req,res)=>{
+exports.resetPassword = async (req, res) => {
 
     const { password, confirmPassword } = req.body;
-    console.log(req.body)
+    // console.log(req.body)
 
     if (password !== confirmPassword) {
         req.flash('error', 'Passwords do not match');
         return res.redirect(`/reset-password/${req.params.token}`);
     }
 
-    const userToken = req.params.token;
+    const user = await User.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    });
 
-    if (!userToken) {
+    if (!user) {
         req.flash('error', 'Password reset token is invalid or has expired');
         return res.redirect('/forget-password');
     }
 
+    // Hash password 
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    user.password = hashedPassword; 
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    req.flash('success', 'Your password has been reset successfully!');
     res.redirect('/success');
 }
 
 
 //  Success Page 
-exports.successPage=(req,res)=>{
-res.render('auth/successPassword')
+exports.successPage = (req, res) => {
+    res.render('auth/successPassword')
 }
