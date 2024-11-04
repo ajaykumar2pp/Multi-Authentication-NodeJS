@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const passport = require('passport')
 const transporter = require('../config/nodemailer')
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 
 //  Register 
@@ -149,25 +150,40 @@ exports.forgetPassword = async (req, res) => {
     console.log("Reset URL Link", resetUrl)
 
     // Send email
-    const mailOptions = {
+    const message = {
         to: user.email,
         from: process.env.EMAIL_USER,
         subject: 'Password Reset',
-        html: `<p>You requested a password reset.</p>
-                   <p>Click this <a href="${resetUrl}" target="_blank">link</a> to set a new password.</p>`
+        html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #333;">You Requested a Password Reset</h2>
+            <p>Click this <a href="${resetUrl}" target="_blank" style="color: #007bff; text-decoration: none;">link</a> to set a new password.</p>
+            <p>If you didn't request this, please ignore this email.</p>
+            <footer style="margin-top: 20px;">
+                <p>Best regards,<br>IT Gurukul Kangri</p>
+            </footer>
+        </div>
+    `,
     };
 
-    transporter.sendMail(mailOptions, (err) => {
+    transporter.sendMail(message, (err, info) => {
         if (err) {
             console.error(err);
-            req.flash('error', 'Something went wrong');
+            req.flash('error', 'Something went wrong while sending the email');
             return res.redirect('/forget-password');
         }
+
+        
+        console.log('Message sent successfully!');
+        // Log the message ID for confirmation
+        console.log("Message sent: %s", info.messageId);
+        // console.log(nodemailer.getTestMessageUrl(info));
+
         res.redirect('/check-email');
     });
 }
 
-
+// Reset Password Page GET
 exports.resetPasswordPage = async (req, res) => {
 
     const userToken = await User.findOne({
@@ -206,7 +222,7 @@ exports.resetPassword = async (req, res) => {
     // Hash password 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    user.password = hashedPassword; 
+    user.password = hashedPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
