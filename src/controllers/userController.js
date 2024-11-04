@@ -147,7 +147,7 @@ exports.forgetPassword = async (req, res) => {
     await user.save();
 
     const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
-    console.log("Reset URL Link", resetUrl)
+    // console.log("Reset URL Link", resetUrl)
 
     // Send email
     const message = {
@@ -160,7 +160,7 @@ exports.forgetPassword = async (req, res) => {
             <p>Click this <a href="${resetUrl}" target="_blank" style="color: #007bff; text-decoration: none;">link</a> to set a new password.</p>
             <p>If you didn't request this, please ignore this email.</p>
             <footer style="margin-top: 20px;">
-                <p>Best regards,<br>IT Gurukul Kangri</p>
+                <p>Best regards,<br>IT Gurukul Kangri University</p>
             </footer>
         </div>
     `,
@@ -174,10 +174,9 @@ exports.forgetPassword = async (req, res) => {
         }
 
         
-        console.log('Message sent successfully!');
+        // console.log('Message sent successfully!');
         // Log the message ID for confirmation
-        console.log("Message sent: %s", info.messageId);
-        // console.log(nodemailer.getTestMessageUrl(info));
+        // console.log("Message sent: %s", info.messageId);
 
         res.redirect('/check-email');
     });
