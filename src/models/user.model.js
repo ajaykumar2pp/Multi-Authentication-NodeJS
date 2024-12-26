@@ -8,6 +8,7 @@ const userSchema = new Schema({
     image: {type: String},
     password: { type: String },
     googleId: {type: String},
+    githubId: {type: String},
     resetPasswordToken: { type: String },  
     resetPasswordExpires: { type: Date } 
 }, { timestamps: true });

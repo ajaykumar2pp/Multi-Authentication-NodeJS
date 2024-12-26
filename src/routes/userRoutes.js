@@ -20,19 +20,34 @@ router.post('/login', userController.postLogin);
 // Google Authentication
 router.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email'],
-    prompt: 'select_account' 
+    prompt: 'select_account'
 }));
 
-router.get('/auth/google/callback', 
+router.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
         // Successful authentication
-        res.redirect('/dashboard'); 
+        res.redirect('/dashboard');
+    }
+);
+
+// Github Authentication
+router.get('/auth/github', passport.authenticate('github', {
+    scope: ["user:email"],
+    prompt: 'select_account'
+}));
+
+// Github Authentication Successful
+router.get('/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    (req, res) => {
+        // Successful authentication
+        res.redirect('/dashboard');
     }
 );
 
 // Dashboard GET Route
-router.get('/dashboard',auth, userController.dashboardPage);
+router.get('/dashboard', auth, userController.dashboardPage);
 
 // Forget Password GET Route
 router.get('/forget-password', userController.forgetPage);

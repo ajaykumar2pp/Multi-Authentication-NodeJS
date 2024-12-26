@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GitHubStrategy = require("passport-github2").Strategy;
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt');
 
@@ -35,7 +36,8 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${baseURL}/auth/google/callback`,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+
 },
     async (accessToken, refreshToken, profile, done) => {
         // console.log("Google Profile:", profile);
@@ -46,8 +48,8 @@ passport.use(new GoogleStrategy({
                 user = await new User({
                     googleId: profile.id,
                     username: profile.displayName,
-                    email: profile.emails[0].value,
-                    image: profile.photos[0].value,
+                    email: profile.emails ? profile.emails[0].value : 'No email',
+                    image: profile.photos ? profile.photos[0].value : 'No image',
                 }).save();
             }
             return done(null, user);
@@ -56,6 +58,41 @@ passport.use(new GoogleStrategy({
             done(err, null);
         }
     }));
+
+
+// Github Strategy for OAuth authentication
+passport.use(
+    new GitHubStrategy(
+        {
+            clientID: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            callbackURL: process.env.GITHUB_CALLBACK_URL,
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            // console.log("Github Profile:", profile);
+            try {
+                // Check if the user already exists in the database based on GitHub ID
+                let user = await User.findOne({ githubId: profile.id });
+
+                if (!user) {
+                    // If user doesn't exist, create a new user
+                    user = new User({
+                        githubId: profile.id,
+                        username: profile.username,
+                        email: profile.emails ? profile.emails[0].value : 'No email',
+                        image: profile.photos ? profile.photos[0].value : 'No image',
+                    });
+                    await user.save();
+                }
+                return done(null, user);
+            } catch (err) {
+                console.error(err);
+                done(err, null);
+            }
+        }
+    )
+);
+
 
 
 // Serialize  user
