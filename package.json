@@ -1,7 +1,7 @@
 {
   "name": "multi-authentication",
   "version": "1.0.0",
-  "description": "Register, Login, Google Login, Github Login , Logout And Dashboard page ",
+  "description": "A multi-authentication system with register, login, Google and GitHub OAuth, logout, and dashboard.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
