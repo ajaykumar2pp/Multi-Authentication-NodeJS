@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors')
@@ -11,9 +11,10 @@ const userRoutes = require('./src/routes/userRoutes');
 // Initialize Express app
 const app = express();
 
+
 //***************** Session config   ******************//
 app.use(session({
-    secret:  process.env.SECRET_KEY,
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24 hour
@@ -28,24 +29,25 @@ app.use(passport.session());
 //***************** Express Flash  ******************//
 app.use(flash())
 
+//*********** Enable CORS for all routes **************// 
+app.use(cors());
 
 // ********  serve the static file from the 'public' directory *********//
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json())   // Parse JSON bodies for incoming requests
+app.use(express.urlencoded({ extended: false }));   // Parse URL-encoded bodies
 
 
 // *********   Set Template Engine  *********//
 
-app.set("view engine","ejs")
+app.set("view engine", "ejs")
 app.set('views', path.join(__dirname, 'views'))
 
 // *********  Database Connection ************//
 dbConfig.connectMongoDB();
 
 
-//*********** Enable CORS for all routes **************// 
-app.use(cors());
+
 
 app.get('/', (req, res) => {
     res.redirect('/register');
@@ -62,10 +64,12 @@ app.use((req, res, next) => {
 
 // ***********   Port Start   *************//
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT,()=>{
-    console.log(`Server running on port ${PORT}`)
+app.listen(PORT, (err) => {
+    if (err) {
+        console.error('❌ Failed to start server:', err.message);
+    }
+    else {
+        console.log(`🚀 Server running  on http://localhost:${PORT}`);
+    }
 })
 
-server.on('error', (err) => {
-    console.error('Failed to start the server:', err.message);
-});
