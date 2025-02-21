@@ -87,7 +87,7 @@ src/
 
 ## 🚦 API Endpoints
 
-| http method | Endpoint                  | Description                                    |
+| HTTP Method | Endpoint                  | Description                                    |
 |--------------|---------------------------|------------------------------------------------|
 | `GET`        | `/register`                | Displays the registration page.               |
 | `POST`       | `/register`                | Registers a new user.                         |

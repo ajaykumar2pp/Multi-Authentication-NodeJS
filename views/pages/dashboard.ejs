@@ -21,7 +21,7 @@
         
     
         <div class="d-flex align-items-center justify-content-center mb-4">
-            <img src="<%= user.image || '/images/default-user.avif' %>" alt="User Profile Image"
+            <img src="<%= user.image || '/images/default-user.avif' %>" alt="User Profile Image" referrerPolicy="no-referrer"
             draggable="false" style="width: 60px; height: 60px; border-radius: 50%; margin-right: 10px;">
             <p class="lead mb-0">You are logged in as <%= user.email %>.</p>
         </div>
